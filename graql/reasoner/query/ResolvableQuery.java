@@ -151,7 +151,8 @@ public abstract class ResolvableQuery implements ReasonerQuery {
     @CheckReturnValue
     @VisibleForTesting
     public Stream<ConceptMap> resolve(boolean infer) {
-        return resolve(new HashSet<>(), infer);
+        if (!infer) return traverse();
+        else return resolve(new HashSet<>());
     }
 
     /**
@@ -159,13 +160,9 @@ public abstract class ResolvableQuery implements ReasonerQuery {
      * @return stream of resolved answers
      */
     @CheckReturnValue
-    public Stream<ConceptMap> resolve(Set<ReasonerAtomicQuery> subGoals, boolean infer){
-        boolean doNotResolve = !infer || (isPositive() && !isRuleResolvable());
-        if (doNotResolve) {
-            return traverse();
-        } else {
-            return new ResolutionIterator(this, subGoals, context().queryCache()).hasStream();
-        }
+    public Stream<ConceptMap> resolve(Set<ReasonerAtomicQuery> subGoals){
+        if ((isPositive() && !isRuleResolvable())) return traverse();
+        else return new ResolutionIterator(this, subGoals, context().queryCache()).hasStream();
     }
 
     /**

@@ -90,7 +90,7 @@ public class CompositeState extends AnswerPropagatorState<CompositeQuery> {
         Set<ReasonerAtomicQuery> subGoals = new HashSet<>(getVisitedSubGoals());
         boolean isNegationSatisfied = complements.stream()
                 .map(q -> q.withSubstitution(answer))
-                .noneMatch(q -> q.resolve(subGoals, true).findFirst().isPresent());
+                .noneMatch(q -> q.resolve(subGoals).findFirst().isPresent());
 
         return isNegationSatisfied?
                 new AnswerState(
